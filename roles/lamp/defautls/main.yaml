@@ -6,8 +6,9 @@ mysql_root_password: !vault |
   65343261356439386366396365376265383864373832393065646430343735656165366337303733
   3965353632623933310a626638383766333237393337636137383434663131366439363337383165
   6566
-app_user: "anton"
-http_host: "localhost"
-http_conf: "localhost.conf"
-http_port: "80"
+app_user: anton
+http_host: webserver
+http_conf: webserver.conf
+http_domain_name: eteach.eu
+http_port: 80
 disable_default: true

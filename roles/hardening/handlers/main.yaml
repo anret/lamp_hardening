@@ -1,5 +1,5 @@
 ---
-- name: Restart Apache
+- name: auditd_restart
   ansible.builtin.service:
-    name: apache2
+    name: auditd
     state: restarted

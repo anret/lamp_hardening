@@ -1,7 +1,7 @@
 <VirtualHost *:{{ http_port }}>
    ServerAdmin webmaster@localhost
-   ServerName {{ http_host }}
-   ServerAlias www.{{ http_host }}
+   ServerName {{ http_host }}.{{ http_domain_name }}
+   ServerAlias www.{{ http_host }}.{{ http_domain_name }}
    DocumentRoot /var/www/{{ http_host }}
    ErrorLog ${APACHE_LOG_DIR}/error.log
    CustomLog ${APACHE_LOG_DIR}/access.log combined
