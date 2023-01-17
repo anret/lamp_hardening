@@ -1,0 +1,6 @@
+---
+- name: LAMP Stack installieren
+  hosts: db
+  roles:
+  - role: lamp
+...
