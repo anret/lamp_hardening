@@ -1,4 +1,10 @@
 ---
+app_user: anton
+http_host: webserver
+http_conf: webserver.conf
+http_domain_name: eteach.eu
+http_port: 80
+disable_default: true
 mysql_root_password: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   39373036336233333265333738636434356163396364663333383162363131343530346339623062
@@ -6,9 +12,3 @@ mysql_root_password: !vault |
   65343261356439386366396365376265383864373832393065646430343735656165366337303733
   3965353632623933310a626638383766333237393337636137383434663131366439363337383165
   6566
-app_user: anton
-http_host: webserver
-http_conf: webserver.conf
-http_domain_name: eteach.eu
-http_port: 80
-disable_default: true

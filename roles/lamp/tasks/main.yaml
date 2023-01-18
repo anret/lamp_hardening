@@ -28,20 +28,17 @@
     dest: /etc/apache2/sites-available/{{ http_conf }}
     mode: 0644
   register: apache2_new_host
-  notify: Reload Apache
+  notify: Restart Apache
 
 - name: Enable new site
   command: /usr/sbin/a2ensite {{ http_conf }}
   when: "(apache2_new_root is changed) or (apache2_new_host is changed)"
-  notify: Reload Apache
+  notify: Restart Apache
 
 - name: Disable default Apache site
   command: /usr/sbin/a2dissite 000-default.conf
   changed_when: true
-  when:
-    - disable_default
-    - (apache2_new_root is changed) or (apache2_new_host is changed)
-  notify: Reload Apache
+  notify: Restart Apache
 
 # MySQL Configuration
 - name: Sets the root password
