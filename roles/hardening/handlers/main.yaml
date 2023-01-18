@@ -1,5 +1,5 @@
 ---
 - name: auditd_restart
-  ansible.builtin.service:
+  service:
     name: auditd
     state: restarted

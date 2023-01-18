@@ -1,6 +1,6 @@
 ---
 - name: Ensure requirements in place
-  ansible.builtin.package:
+  package:
     name:
       - guestfs-tools
       - python3-libvirt
@@ -8,7 +8,7 @@
   become: true
 
 - name: Get VMs list
-  community.libvirt.virt:
+  virt:
     command: list_vms
   register: existing_vms
   changed_when: false
@@ -17,13 +17,13 @@
   when: "vm_name not in existing_vms.list_vms"
   block:
     - name: Download base image
-      ansible.builtin.get_url:
+      get_url:
         url: "{{ base_image_url }}"
         dest: /tmp/{{ base_image_name }}
         checksum: sha256:{{ base_image_sha }}
 
     - name: Copy base image to libvirt directory
-      ansible.builtin.copy:
+      copy:
         dest: "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
         src: /tmp/{{ base_image_name }}
         force: false
@@ -32,7 +32,7 @@
       register: copy_results
 
     - name: Configure the image
-      ansible.builtin.command: |
+      command: |
         virt-customize -a {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2 \
         --hostname {{ vm_name }} \
         --root-password password:{{ vm_root_pass }} \
@@ -41,12 +41,12 @@
       when: copy_results is changed
 
     - name: Define vm
-      community.libvirt.virt:
+      virt:
         command: define
         xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
 
 - name: Ensure VM is started
-  community.libvirt.virt:
+  virt:
     name: "{{ vm_name }}"
     state: running
   register: vm_start_results

@@ -1,14 +1,14 @@
 ---
 - name: Update package manager
-  ansible.builtin.apt:
+  apt:
     update_cache: true
     upgrade: dist
 
 - name: Remove unnecessary software
-  ansible.builtin.apt:
-    name: "{{ item }}"
+  apt:
+    name: "{{ pckt }}"
     state: absent
-  with_items:
+  loop:
     - telnetd
     - ftpd
     - rsh-server
@@ -16,33 +16,33 @@
     - talkd
     - xinetd
     - tftpd
+  loop_control:
+    loop_var: pckt
 
 - name: Configure SSH
-  ansible.builtin.lineinfile:
+  lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "^PermitRootLogin"
     line: "PermitRootLogin no"
 
 - name: Enable firewall
-  community.general.ufw:
+  ufw:
     state: enabled
     policy: deny
-    default_rules: true
 
-- name: Configure IPTables
+- name: Allow connections on multiple ports
   ansible.builtin.iptables:
     chain: INPUT
-    jump: DROP
-    rule: "{{ rule }}"
-    state: present
-  loop:
-    - "-i lo -j ACCEPT"
-    - "-p icmp --icmp-type echo-request -j ACCEPT"
-  loop_control:
-    loop_var: rule
+    protocol: tcp
+    destination_ports:
+      - "22"
+      - "80"
+      - "443"
+      - "8081:8083"
+    jump: ACCEPT
 
 - name: Configure auditd
-  ansible.builtin.lineinfile:
+  lineinfile:
     path: /etc/audit/auditd.conf
     regexp: "^max_log_file"
     line: "max_log_file = 10"

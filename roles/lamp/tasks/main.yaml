@@ -1,6 +1,6 @@
 ---
 - name: Install LAMP Packages
-  ansible.builtin.apt:
+  apt:
     name:
       [
         "apache2",
@@ -15,7 +15,7 @@
 
 # Apache
 - name: Create document root
-  ansible.builtin.file:
+  file:
     path: /var/www/{{ http_host }}
     state: directory
     owner: "{{ app_user }}"
@@ -23,7 +23,7 @@
   register: apache2_new_root
 
 - name: Set up Apache virtualhost
-  ansible.builtin.template:
+  template:
     src: apache.conf.j2
     dest: /etc/apache2/sites-available/{{ http_conf }}
     mode: 0644
@@ -31,12 +31,12 @@
   notify: Reload Apache
 
 - name: Enable new site
-  ansible.builtin.command: /usr/sbin/a2ensite {{ http_conf }}
+  command: /usr/sbin/a2ensite {{ http_conf }}
   when: "(apache2_new_root is changed) or (apache2_new_host is changed)"
   notify: Reload Apache
 
 - name: Disable default Apache site
-  ansible.builtin.command: /usr/sbin/a2dissite 000-default.conf
+  command: /usr/sbin/a2dissite 000-default.conf
   changed_when: true
   when:
     - disable_default
@@ -45,13 +45,13 @@
 
 # MySQL Configuration
 - name: Sets the root password
-  community.mysql.mysql_user:
+  mysql_user:
     name: root
     password: "{{ mysql_root_password }}"
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
 - name: Removes all anonymous user accounts
-  community.mysql.mysql_user:
+  mysql_user:
     name: ""
     host_all: true
     state: absent
@@ -59,7 +59,7 @@
     login_password: "{{ mysql_root_password }}"
 
 - name: Removes the MySQL test database
-  community.mysql.mysql_db:
+  mysql_db:
     name: test
     state: absent
     login_user: root
@@ -67,14 +67,14 @@
 
 # UFW Configuration
 - name: "UFW - Allow HTTP on port {{ http_port }}"
-  community.general.ufw:
+  ufw:
     rule: allow
     port: "{{ http_port }}"
     proto: tcp
 
 # PHP Info Page
 - name: Sets Up PHP Info Page
-  ansible.builtin.copy:
+  copy:
     src: info.php
     dest: /var/www/{{ http_host }}/info.php
     mode: 0644
