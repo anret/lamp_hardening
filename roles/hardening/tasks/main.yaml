@@ -31,7 +31,7 @@
     policy: deny
 
 - name: Allow connections on multiple ports
-  ansible.builtin.iptables:
+  iptables:
     chain: INPUT
     protocol: tcp
     destination_ports:
